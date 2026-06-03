@@ -911,49 +911,19 @@ init();
 <script>
 (function() {
   var GAME_ID = 'igo-quiz';
-
-  window.addEventListener('load', function() {
-
-    // ---- プレーヤー名の自動セット ----
-    // selectGenre後にscreen-nameが表示されるタイミングで自動入力
-    var _origSelectGenre = window.selectGenre;
-    if (typeof _origSelectGenre === 'function') {
-      window.selectGenre = function(genreId) {
-        _origSelectGenre(genreId);
-        setTimeout(function() {
-          var inp = document.getElementById('player-name-input');
-          if (inp && window.TomyStamp) {
-            var saved = TomyStamp.getPlayer();
-            if (saved && !inp.value) inp.value = saved;
-          }
-        }, 80);
-      };
-    }
-
-    // ---- スタンプ送信：endGame をフック ----
-    var _origEndGame = window.endGame;
-    if (typeof _origEndGame === 'function') {
-      window.endGame = function() {
-        var ret = _origEndGame.apply(this, arguments);
-        setTimeout(sendStamp, 500);
-        return ret;
-      };
-    }
-  });
+  var _stampSent = false;
 
   function sendStamp() {
     if (!window.TomyStamp) return;
+    if (_stampSent) return;
 
-    // プレーヤー名：currentPlayer
     var player = (typeof currentPlayer === 'string' && currentPlayer && currentPlayer !== 'ゲスト')
       ? currentPlayer : TomyStamp.getPlayer();
     if (player) TomyStamp.setPlayer(player);
     if (!player) return;
 
-    // 正解数：correctCount
     var correctNum = (typeof correctCount === 'number') ? correctCount : 0;
 
-    // ジャンル名：GENRESからcurrentGenreのnameを取得
     var genreName = 'default';
     if (typeof currentGenre === 'string' && currentGenre && typeof GENRES !== 'undefined') {
       var g = GENRES.find(function(g) { return g.id === currentGenre; });
@@ -963,18 +933,57 @@ init();
     console.log('[stamp] player=' + player + ' correct=' + correctNum + ' genre=' + genreName);
 
     if (correctNum >= 9) {
+      _stampSent = true;
       TomyStamp.send(GAME_ID, genreName, correctNum).then(function(r) {
         if (r.ok) {
           console.log('[⭐ stamp] 獲得! genre=' + genreName);
           var toast = document.createElement('div');
-          toast.textContent = '⭐ スタンプ獲得！ランキングに反映されます';
-          toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#f0d060;padding:10px 20px;border-radius:4px;font-size:13px;z-index:9999;border:1px solid rgba(240,208,96,0.4);white-space:nowrap;';
+          toast.textContent = '🌸 花丸スタンプ獲得！ランキングに反映されます';
+          toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#f48fb1;padding:10px 20px;border-radius:4px;font-size:13px;z-index:9999;border:1px solid rgba(244,143,177,0.5);white-space:nowrap;';
           document.body.appendChild(toast);
           setTimeout(function() { document.body.removeChild(toast); }, 3000);
         }
       });
     }
   }
+
+  // endGame を直接上書き（load後でなく即時）
+  document.addEventListener('DOMContentLoaded', function() {
+    _stampSent = false;
+
+    // 結果画面の表示を監視してスタンプ送信
+    var observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(m) {
+        m.addedNodes.forEach(function(node) {});
+      });
+      var resultScreen = document.getElementById('screen-result');
+      if (resultScreen && (resultScreen.classList.contains('active') || resultScreen.style.display === 'block')) {
+        setTimeout(sendStamp, 300);
+      }
+    });
+
+    // screen-result が active になるのを監視
+    var target = document.getElementById('screen-result');
+    if (target) {
+      observer.observe(target, { attributes: true, attributeFilter: ['class', 'style'] });
+    }
+
+    // プレーヤー名の自動セット
+    var _origSelectGenre = window.selectGenre;
+    if (typeof _origSelectGenre === 'function') {
+      window.selectGenre = function(genreId) {
+        _stampSent = false; // 新しいゲーム開始でリセット
+        _origSelectGenre.apply(this, arguments);
+        setTimeout(function() {
+          var inp = document.getElementById('player-name-input');
+          if (inp && window.TomyStamp) {
+            var saved = TomyStamp.getPlayer();
+            if (saved && !inp.value) inp.value = saved;
+          }
+        }, 80);
+      };
+    }
+  });
 })();
 </script>
 </body>
