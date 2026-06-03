@@ -818,6 +818,8 @@ function endGame() {
   }
 
   showScreen('screen-result');
+  // 花丸スタンプ送信
+  setTimeout(function() { if (typeof _igoSendStamp === 'function') _igoSendStamp(); }, 400);
 }
 
 // ============================================================
@@ -913,7 +915,7 @@ init();
   var GAME_ID = 'igo-quiz';
   var _stampSent = false;
 
-  function sendStamp() {
+  window._igoSendStamp = function() {
     if (!window.TomyStamp) return;
     if (_stampSent) return;
 
@@ -935,8 +937,8 @@ init();
     if (correctNum >= 9) {
       _stampSent = true;
       TomyStamp.send(GAME_ID, genreName, correctNum).then(function(r) {
-        if (r.ok) {
-          console.log('[🌸 stamp] 獲得! genre=' + genreName);
+        if (r && r.ok) {
+          console.log('[🌸 stamp] 獲得!');
           var toast = document.createElement('div');
           toast.textContent = '🌸 花丸スタンプ獲得！ランキングに反映されます';
           toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#f48fb1;padding:10px 20px;border-radius:4px;font-size:13px;z-index:9999;border:1px solid rgba(244,143,177,0.5);white-space:nowrap;';
@@ -945,22 +947,10 @@ init();
         }
       });
     }
-  }
+  };
 
+  // selectGenre をフック（新ゲーム開始でリセット）
   document.addEventListener('DOMContentLoaded', function() {
-
-    // showScreen をフック
-    var _origShowScreen = window.showScreen;
-    if (typeof _origShowScreen === 'function') {
-      window.showScreen = function(screenId) {
-        _origShowScreen.apply(this, arguments);
-        if (screenId === 'screen-result') {
-          setTimeout(sendStamp, 400);
-        }
-      };
-    }
-
-    // selectGenre をフック（新ゲーム開始でリセット）
     var _origSelectGenre = window.selectGenre;
     if (typeof _origSelectGenre === 'function') {
       window.selectGenre = function(genreId) {
