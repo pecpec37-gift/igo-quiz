@@ -234,7 +234,7 @@
   <div class="rules-box">
     <div class="rules-title">📋 ルール</div>
     <ul class="rules-list">
-      <li>制限時間：<strong>120秒</strong> ／ 各ジャンル <strong>10問</strong> ランダム出題</li>
+      <li>制限時間：<strong>30秒</strong> ／ 各ジャンル <strong>10問</strong> ランダム出題</li>
       <li>✅ 正解 → <strong>+10点</strong> ＋ 時間+5秒</li>
       <li>❌ 不正解 → 減点なし ＋ 時間−5秒のペナルティ</li>
       <li>🏆 残り時間がそのままボーナス点に加算！</li>
@@ -245,7 +245,7 @@
   <div class="genre-hint">▼ カードをクリックすると即スタート ▼</div>
   <div class="genre-grid" id="genre-grid"></div>
   <button class="btn-ranking" onclick="showRanking()">🏆 スコアランキングを見る</button>
-  <a href="https://pecpec37-gift.github.io/portal/" class="portal-link">← とみやんのゲームランド</a>
+  <a href="https://pecpec37-gift.github.io/portal/" class="portal-link">← Tommy-Go</a>
 </div>
 
 <!-- NAME SCREEN -->
@@ -267,7 +267,7 @@
     <div class="score-display"><span id="score-val">0</span> pt</div>
     <div class="timer-wrap">
       <span class="timer-label">残り</span>
-      <span class="timer-value" id="timer-val">120</span>
+      <span class="timer-value" id="timer-val">30</span>
       <span class="timer-unit">秒</span>
     </div>
   </div>
@@ -292,7 +292,7 @@
     </div>
     <button class="btn-retry" onclick="retryGame()">もう一度挑戦</button>
     <button class="btn-to-top" onclick="backToTop()">← トップへ</button>
-    <a href="https://pecpec37-gift.github.io/portal/" class="portal-link">← とみやんのゲームランド</a>
+    <a href="https://pecpec37-gift.github.io/portal/" class="portal-link">← Tommy-Go</a>
   </div>
   <div class="wrong-review" id="wrong-review">
     <div class="wrong-review-title">📖 間違えた問題の復習</div>
@@ -592,7 +592,7 @@ let qIndex = 0;
 let score = 0;
 let correctCount = 0;
 let wrongCount = 0;
-let timeLeft = 120;
+let timeLeft = 30;
 let timer = null;
 let answered = false;
 let wrongAnswers = [];
@@ -643,7 +643,7 @@ function startGame() {
   const pool = [...QUESTIONS[currentGenre]];
   questions = shuffle(pool).slice(0, 10);
   qIndex = 0; score = 0; correctCount = 0; wrongCount = 0;
-  timeLeft = 120; wrongAnswers = [];
+  timeLeft = 30; wrongAnswers = [];
 
   showScreen('screen-game');
   renderQuestion();
@@ -675,7 +675,7 @@ function startTimer() {
 function updateTimerDisplay() {
   const el = document.getElementById('timer-val');
   el.textContent = timeLeft;
-  el.className = 'timer-value' + (timeLeft <= 15 ? ' danger' : '');
+  el.className = 'timer-value' + (timeLeft <= 10 ? ' danger' : '');
 }
 
 function addTime(sec) {
