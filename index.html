@@ -219,6 +219,21 @@
   @media (max-width: 360px) {
     .genre-grid { grid-template-columns: 1fr; }
   }
+
+  /* ===== 学習メニュー ===== */
+  .study-btn{width:100%;max-width:500px;margin:0 auto 14px;display:block;background:linear-gradient(135deg,var(--gold),#a06010);color:var(--bg);border:none;border-radius:10px;padding:12px 16px;font-size:14px;font-weight:700;font-family:'Noto Serif JP',serif;cursor:pointer;letter-spacing:.05em;box-shadow:0 5px 16px rgba(212,160,23,.25);transition:filter .15s;}
+  .study-btn:hover{filter:brightness(1.07);}
+  .study-detail-head{display:flex;align-items:center;gap:12px;justify-content:center;text-align:center;margin:22px 0 18px;}
+  .study-detail-icon{font-size:38px;line-height:1;}
+  .study-detail-name{font-family:'Noto Serif JP',serif;font-size:20px;font-weight:700;color:var(--gold);}
+  .study-intro{background:linear-gradient(135deg,rgba(212,160,23,.12),rgba(139,105,20,.06));border:1px solid var(--border);border-radius:10px;padding:15px 16px;margin:0 0 16px;font-size:13.5px;line-height:1.85;color:var(--text);}
+  .lpoint{background:rgba(255,255,255,.03);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:8px;padding:13px 15px;margin-bottom:11px;}
+  .lpoint .lh{display:flex;align-items:flex-start;gap:9px;font-weight:700;font-size:14px;color:var(--gold-light);line-height:1.5;}
+  .lpoint .lh .no{flex:none;min-width:23px;height:23px;border-radius:50%;background:var(--gold);color:var(--bg);font-size:12px;display:flex;align-items:center;justify-content:center;font-weight:700;}
+  .lpoint .lb{margin-top:7px;font-size:13.5px;line-height:1.85;color:var(--text-muted);}
+  .study-actions{margin-top:18px;display:flex;flex-direction:column;gap:10px;max-width:500px;margin-left:auto;margin-right:auto;}
+  .btn-study-quiz{background:linear-gradient(135deg,var(--gold),#a06010);color:var(--bg);border:none;border-radius:10px;padding:13px 16px;font-size:15px;font-weight:700;font-family:'Noto Serif JP',serif;cursor:pointer;transition:filter .15s;}
+  .btn-study-quiz:hover{filter:brightness(1.07);}
 </style>
 <script src="https://pecpec37-gift.github.io/portal/stamp.js"></script>
 </head>
@@ -234,18 +249,19 @@
   <div class="rules-box">
     <div class="rules-title">📋 ルール</div>
     <ul class="rules-list">
-      <li>制限時間：<strong>30秒</strong> ／ 各ジャンル <strong>10問</strong> ランダム出題</li>
+      <li>制限時間：<strong>120秒</strong> ／ 各ジャンル <strong>10問</strong> ランダム出題</li>
       <li>✅ 正解 → <strong>+10点</strong> ＋ 時間+5秒</li>
       <li>❌ 不正解 → 減点なし ＋ 時間−5秒のペナルティ</li>
       <li>🏆 残り時間がそのままボーナス点に加算！</li>
       <li>【4択】と【○×】がランダムにミックスされます</li>
     </ul>
   </div>
+  <button class="study-btn" onclick="openStudy()">📖 学習メニュー（概要と解説を読む）</button>
   <div class="genre-title">🎯 ジャンルを選んでスタート</div>
   <div class="genre-hint">▼ カードをクリックすると即スタート ▼</div>
   <div class="genre-grid" id="genre-grid"></div>
   <button class="btn-ranking" onclick="showRanking()">🏆 スコアランキングを見る</button>
-  <a href="https://pecpec37-gift.github.io/portal/" class="portal-link">← Tommy-Go</a>
+  <a href="https://pecpec37-gift.github.io/portal/" class="portal-link">← とみやんのゲームランド</a>
 </div>
 
 <!-- NAME SCREEN -->
@@ -267,7 +283,7 @@
     <div class="score-display"><span id="score-val">0</span> pt</div>
     <div class="timer-wrap">
       <span class="timer-label">残り</span>
-      <span class="timer-value" id="timer-val">30</span>
+      <span class="timer-value" id="timer-val">120</span>
       <span class="timer-unit">秒</span>
     </div>
   </div>
@@ -292,7 +308,7 @@
     </div>
     <button class="btn-retry" onclick="retryGame()">もう一度挑戦</button>
     <button class="btn-to-top" onclick="backToTop()">← トップへ</button>
-    <a href="https://pecpec37-gift.github.io/portal/" class="portal-link">← Tommy-Go</a>
+    <a href="https://pecpec37-gift.github.io/portal/" class="portal-link">← とみやんのゲームランド</a>
   </div>
   <div class="wrong-review" id="wrong-review">
     <div class="wrong-review-title">📖 間違えた問題の復習</div>
@@ -306,6 +322,34 @@
   <div class="ranking-genre-tabs" id="ranking-tabs"></div>
   <div class="ranking-list" id="ranking-list"></div>
   <button class="btn-to-top" onclick="backToTop()" style="max-width:500px;width:100%;margin-top:16px;">← トップへ</button>
+</div>
+
+<!-- ===== STUDY (list) ===== -->
+<div id="screen-study" class="screen">
+  <div class="title-wrap">
+    <span class="title-icon">📖</span>
+    <div class="title-main">学習メニュー</div>
+    <div class="title-sub">STUDY</div>
+  </div>
+  <div class="genre-title">🎯 ジャンルを選んで学ぶ</div>
+  <div class="genre-hint">▼ カードをクリックで概要と解説 ▼</div>
+  <div class="genre-grid" id="study-grid"></div>
+  <button class="btn-ranking" onclick="backToTop()">← トップへ</button>
+  <a href="https://pecpec37-gift.github.io/portal/" class="portal-link">← とみやんのゲームランド</a>
+</div>
+
+<!-- ===== STUDY (detail) ===== -->
+<div id="screen-studyDetail" class="screen">
+  <div class="study-detail-head">
+    <span class="study-detail-icon" id="study-icon">⚫</span>
+    <div class="study-detail-name" id="study-name">ジャンル</div>
+  </div>
+  <div id="study-body"></div>
+  <div class="study-actions">
+    <button class="btn-study-quiz" id="study-quiz-btn">🎯 このジャンルのクイズに挑戦</button>
+    <button class="btn-ranking" onclick="openStudy()">← 学習メニューへ戻る</button>
+    <button class="btn-ranking" onclick="backToTop()">🏠 トップへ</button>
+  </div>
 </div>
 
 <script>
@@ -592,7 +636,7 @@ let qIndex = 0;
 let score = 0;
 let correctCount = 0;
 let wrongCount = 0;
-let timeLeft = 30;
+let timeLeft = 120;
 let timer = null;
 let answered = false;
 let wrongAnswers = [];
@@ -600,8 +644,42 @@ let wrongAnswers = [];
 // ============================================================
 //  INIT
 // ============================================================
+// ===== 学習メニュー =====
+const STUDY = {"kihon": {"intro": "囲碁は盤の交点に黒白の石を交互に置き、囲った「地」の広さを競うゲームです。石の生き死にや基本用語など、対局の土台を押さえましょう。", "points": [{"h": "盤と石の置き方", "b": "標準は19路盤で、縦横19本ずつの線の交点は361。石はマス目ではなく「交点」に置き、黒が先手です。入門・練習には9路盤や13路盤も使われます。"}, {"h": "勝敗の決め方", "b": "自分の石で囲った空点の数＝「地（じ）」の多さを競います。日本では地の大きさで数える方式です。両者が連続してパスすると終局し、地を計算します。"}, {"h": "コミ", "b": "先手（黒）が有利なため、その分を白に与えるハンデが「コミ」。現在の日本ルールでは6目半が一般的です。"}, {"h": "石を取る／呼吸点", "b": "石に隣接する空点が「呼吸点（ダメ）」。相手の石の呼吸点をすべて塞ぐと取れます。斜めはつながっておらず、上下左右の連絡で判定します。取った石は「アゲハマ」です。"}, {"h": "アタリとコウ", "b": "呼吸点が残り1つ＝あと1手で取られる状態が「アタリ」。取り返しが無限に続くのを防ぐルールが「コウ」で、直前に取られた場所へはすぐ打ち返せません。"}, {"h": "二眼と生き死に", "b": "石が囲まれても、内部に「二眼」を持てば取られず「生き」が確定します。一眼だけなら死に。互いに取り合えず共存する状態が「セキ」です。"}, {"h": "終局と投了", "b": "打つ場所がなくなり両者がパスすると終局。ダメ（どちらの地でもない空点）を詰めて整地します。勝ち目がないと判断したら「投了」で負けを認めます。"}]}, "rekishi": {"intro": "囲碁は古代中国で生まれ、2000年以上の歴史を持つとされます。日本での家元制度から現代のAI革命まで、大きな流れをたどりましょう。", "points": [{"h": "中国生まれの古代ゲーム", "b": "囲碁の発祥は古代中国。帝王が子の教育に用いたという伝説もあり、2000年以上の歴史を持つとされます。日本には5〜6世紀ごろ伝わったと言われます。"}, {"h": "日本の家元制度", "b": "江戸時代に家元制度が確立し、本因坊家・安井家・井上家・林家の四大家元が競い合いました。最高位は本因坊家。将軍の御前で打つ「御城碁」も行われました（幕末に廃止）。"}, {"h": "江戸の名棋士", "b": "「碁聖」と称される本因坊秀策、江戸期最強の一人とされる本因坊道策など、名棋士を輩出しました。秀策は御城碁で19連勝したと伝わります。"}, {"h": "日本棋院の成立", "b": "1924年に日本棋院が設立されました（本部は東京）。本因坊戦は1939年に始まり、プロ棋士の組織的な運営が整いました。"}, {"h": "新布石革命", "b": "1930年代（昭和初期）、呉清源と木谷実が星や高目を積極的に使う革新的な「新布石」を打ち出し、布石理論を一新しました。呉清源は十番碁で当時のトップ棋士を次々と打ち込みました。"}, {"h": "世界への広がり", "b": "戦後は韓国・中国も強豪に。韓国の曺薫鉉や李昌鎬らが台頭し、応氏杯・LG杯などの世界棋戦が国際化を進めました。"}, {"h": "AI革命", "b": "2016年、DeepMindの「AlphaGo」が李世乭（イ・セドル）に4勝1敗。人間の棋譜を使わず自己対局で学ぶ「AlphaGo Zero」も登場し、囲碁の常識を塗り替えました。"}]}, "senryaku": {"intro": "序盤の布石から終盤のヨセまで、囲碁は局面ごとに考え方が変わります。石の効率を高める代表的な戦略・手筋を押さえましょう。", "points": [{"h": "布石", "b": "序盤に有利な陣形をつくる石の配置計画が「布石」。星に3つ並べる「三連星」、辺の星と小目を組み合わせる「中国流」など、さまざまな型があります。"}, {"h": "隅の手", "b": "隅の石を守り地を確保するのが「シマリ」、相手の隅の石に接近するのが「カカリ」。囲碁は「隅→辺→中央」の順に地を得やすいとされます。"}, {"h": "石の接触戦", "b": "相手の石に直接くっつける「ツケ」、つながりを断つ「キリ」、直進する「ノビ」、斜めの「コスミ」など。相手の呼吸点を詰めてアタリにする「アテ」も基本です。"}, {"h": "地と厚み", "b": "実利の「地」に対し、外側に働く強い勢力が「厚み」。厚みは必ずしも地の多さと同じではなく、将来の戦いで力を発揮します。苦しい石を軽くさばくのが「サバキ」です。"}, {"h": "大局観", "b": "価値の高い場所が「大場」、放置すると危険な急ぎの場所が「急場」。原則として大場より急場を優先します。あえて別の場所に打つのが「テヌキ」です。"}, {"h": "死活と手筋", "b": "石が生きるか死ぬかを読むのが「死活」。相手の石を逃げられなくする「ゲタ」、石と地を交換する「振り替わり」など、手筋を覚えると効率が上がります。"}, {"h": "ヨセ", "b": "終盤に境界を確定していく段階が「ヨセ」。相手に応手を強いる「先手ヨセ」は「後手ヨセ」より価値が高いとされます。コウでは「コウダテ」を多く持つ側が有利です。"}]}, "kifu": {"intro": "名棋士の対局や、AIが囲碁の歴史を変えた一局など、語り継がれる棋譜を知ると囲碁がもっと面白くなります。", "points": [{"h": "秀策の「耳赤の一手」", "b": "本因坊秀策の名局に、相手が思わず耳を赤らめたと伝わる妙手「耳赤の一手」があります。攻め・守り・地をすべて兼ねた一手として名高い一局です。"}, {"h": "秀策流", "b": "秀策が用いた黒の布石「秀策流」は、小目からのシマリを重視する堅実な構え。左右非対称ながら、現代でも通用する布石として研究されています。"}, {"h": "呉清源の十番碁", "b": "昭和期、呉清源は当時の日本トップ棋士たちと一対一の「十番碁」を戦い、次々と打ち込みました。新布石とともに一時代を築いた名シリーズです。"}, {"h": "AlphaGo対李世乭（2016）", "b": "DeepMindのAlphaGoが李世乭に4勝1敗。第2局の37手目、意表を突く一手は「神の一手」と称されました。"}, {"h": "李世乭の反撃「78手目」", "b": "第4局で李世乭が放った78手目のクサビは、AlphaGoを乱した「神の一手」と呼ばれ、人間がAlphaGoに勝った貴重な1勝となりました。"}, {"h": "AlphaGo Masterと柯潔", "b": "人間の棋譜を使わない「AlphaGo Zero」や、オンラインで棋士に60連勝した「AlphaGo Master」が登場。2017年には中国の柯潔が3番勝負に挑みましたが、0勝3敗でした。"}, {"h": "棋譜並べ", "b": "プロの棋譜を並べて追体験することは、昔からの有力な上達法です。名局には囲碁の考え方が凝縮されています。"}]}, "kishi": {"intro": "プロ棋士の段位やタイトル、主要な棋戦のしくみを押さえましょう。日本・韓国・中国のトップ棋士を知ると、観戦がもっと楽しくなります。", "points": [{"h": "段位とプロ", "b": "プロ棋士の最高段位は9段（数字が大きいほど上位）。プロ試験に合格すると初段になります。日本のプロは日本棋院、または関西棋院（大阪）に所属します。"}, {"h": "日本の七大タイトル", "b": "棋聖・名人・本因坊・王座・天元・碁聖・十段の7つ。最高賞金とされるのが「棋聖」です。主催は棋聖戦＝読売新聞、名人戦＝朝日新聞、本因坊戦＝毎日新聞など。"}, {"h": "「本因坊」の今", "b": "かつて世襲だった「本因坊」は、現在はリーグ戦＋番勝負で争うタイトル名になっています。「天元」はタイトル名であり、盤の中央交点の名称でもあります。"}, {"h": "名棋士たち", "b": "韓国出身で日本棋院所属の趙治勲は本因坊を10期以上獲得。中央志向の「宇宙流」で知られる武宮正樹、台湾出身で日本で活躍した林海峰など、個性派が揃います。"}, {"h": "女流棋士", "b": "女流棋士も男性と同じ棋戦に出場でき、9段も存在します。台湾出身・日本棋院所属の謝依旻が、多くの女流タイトルを獲得しました。"}, {"h": "若き才能", "b": "仲邑菫は史上最年少（10歳）でプロ入りし話題になりました。若手の活躍が囲碁界を盛り上げています。"}, {"h": "世界棋戦", "b": "応氏杯・LG杯などの国際棋戦があり、近年は韓国・中国が強豪。「AI後の最強人類」と称された柯潔など、世界のトップ棋士が火花を散らしています。"}]}, "yogo": {"intro": "囲碁には独特の用語と、先人の知恵が詰まった格言があります。知っておくと、解説や対局がぐっと分かりやすくなります。", "points": [{"h": "着点の名前", "b": "隅の目印になる「星」、その1路内側の低い「三々」、小目の1路外の「目外し」、小目より1路高い「高目」など。盤の中央交点は「天元」です。"}, {"h": "先手・後手", "b": "相手に応手を強いて主導権を握るのが「先手（センテ）」、その反対が「後手（ゴテ）」。あえて他へ回る「テヌキ」も重要な判断です。"}, {"h": "コウにまつわる言葉", "b": "コウの争いで相手に対応を迫る手が「コウダテ」。勝っても得の少ない不均衡なコウが「花見コウ」、解消しにくい「両コウ」もあります。"}, {"h": "危険な形", "b": "呼吸点が詰まって自分の石が危うくなる「ダメヅマリ」、ダメが詰まると取られる死の形「曲り四目」、取られやすい「虎口（こぐち）」への打ち込みなど、注意すべき形があります。"}, {"h": "目と眼形", "b": "石が生きるための「目」をつくる形の総称が「眼形（がんけい）」。二眼で生き、一眼では死に。取られた石の下に打つ奇手「石の下」などの手筋もあります。"}, {"h": "対局のしきたり", "b": "先後を決める「握り（にぎり）」、対局を中断して後日再開する「打ちかけ」、対局の手順を記録した「棋譜」、アマに与えられる段・級の認定証「免状」など。"}, {"h": "囲碁十訣", "b": "中国由来の10か条の教え。第一条は「不得貪勝（貪って勝とうとするな）」です。欲張らず大局を見る、勝負の心得が凝縮されています。"}]}};
+function _escStudy(s){ return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
+function buildStudyGrid(){
+  const grid=document.getElementById('study-grid');
+  grid.innerHTML='';
+  GENRES.forEach(function(g){
+    const n=(STUDY[g.id]&&STUDY[g.id].points)?STUDY[g.id].points.length:0;
+    const card=document.createElement('div');
+    card.className='genre-card';
+    card.innerHTML='<span class="genre-icon">'+g.icon+'</span>'
+      +'<div class="genre-name">'+g.name+'</div>'
+      +'<div class="genre-count">解説 '+n+' トピック</div>'
+      +'<div class="genre-badge">クリックで学習</div>';
+    card.onclick=function(){ showStudyGenre(g.id); };
+    grid.appendChild(card);
+  });
+}
+function openStudy(){ showScreen('screen-study'); }
+function showStudyGenre(id){
+  const g=GENRES.find(function(x){return x.id===id;}); const d=STUDY[id];
+  document.getElementById('study-icon').textContent=g.icon;
+  document.getElementById('study-name').textContent=g.name;
+  let html='';
+  if(d&&d.intro) html+='<div class="study-intro">'+_escStudy(d.intro)+'</div>';
+  if(d&&d.points) d.points.forEach(function(p,i){
+    html+='<div class="lpoint"><div class="lh"><span class="no">'+(i+1)+'</span><span>'+_escStudy(p.h)+'</span></div><div class="lb">'+_escStudy(p.b)+'</div></div>';
+  });
+  document.getElementById('study-body').innerHTML=html;
+  document.getElementById('study-quiz-btn').onclick=function(){ selectGenre(id); };
+  showScreen('screen-studyDetail');
+}
+
 function init() {
   buildGenreGrid();
+  buildStudyGrid();
   buildRankingTabs();
 }
 
@@ -643,7 +721,7 @@ function startGame() {
   const pool = [...QUESTIONS[currentGenre]];
   questions = shuffle(pool).slice(0, 10);
   qIndex = 0; score = 0; correctCount = 0; wrongCount = 0;
-  timeLeft = 30; wrongAnswers = [];
+  timeLeft = 120; wrongAnswers = [];
 
   showScreen('screen-game');
   renderQuestion();
@@ -675,7 +753,7 @@ function startTimer() {
 function updateTimerDisplay() {
   const el = document.getElementById('timer-val');
   el.textContent = timeLeft;
-  el.className = 'timer-value' + (timeLeft <= 10 ? ' danger' : '');
+  el.className = 'timer-value' + (timeLeft <= 15 ? ' danger' : '');
 }
 
 function addTime(sec) {
