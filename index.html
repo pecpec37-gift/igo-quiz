@@ -881,7 +881,15 @@ function startGame() {
   localStorage.setItem('igo_player_name', currentPlayer);
 
   const pool = [...QUESTIONS[currentGenre]];
-  questions = shuffle(pool).slice(0, 10);
+  questions = shuffle(pool).slice(0, 10).map(q => {
+    if (q.type !== '4') return q;               // ○×はそのまま
+    const order = shuffle(q.choices.map((_, i) => i)); // 選択肢の並び順をシャッフル
+    return {
+      ...q,
+      choices: order.map(i => q.choices[i]),     // 選択肢を並べ替え
+      ans: order.indexOf(q.ans)                  // 正解インデックスを貼り直し
+    };
+  });
   qIndex = 0; score = 0; correctCount = 0; wrongCount = 0;
   timeLeft = 120; wrongAnswers = [];
 
