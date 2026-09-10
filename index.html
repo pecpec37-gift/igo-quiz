@@ -445,7 +445,7 @@ const QUESTIONS = {
     {type:'4', q:'囲碁の古典「棋経十三篇」はどこの国で書かれましたか？', choices:['日本','韓国','中国','ベトナム'], ans:2},
     {type:'4', q:'「御城碁」が廃止されたのはいつですか？', choices:['江戸幕府崩壊（1868年）頃','明治20年代','大正時代','昭和初期'], ans:0},
     {type:'4', q:'囲碁の世界最強決定戦「応氏杯」はどこの主催ですか？', choices:['日本','韓国','台湾（中国応氏棋院）','アメリカ'], ans:2},
-    {type:'4', q:'平安時代に囲碁を楽しんだとされる文豪は誰ですか？', choices:['紫式部','清少納言','藤原道長','光源氏（架空）'], ans:2},
+    {type:'4', q:'平安時代の『源氏物語』には女性が囲碁を打つ場面が描かれています。この作品の作者は誰ですか？', choices:['紫式部','清少納言','小野小町','紀貫之'], ans:0},
     {type:'ox', q:'本因坊秀策は無敗の御城碁連勝記録を持つ。', ans:true},
     {type:'ox', q:'囲碁の発祥は日本とされている。', ans:false},
     {type:'ox', q:'AlphaGoはイ・セドルとの対局で5戦全勝した。', ans:false},
@@ -881,15 +881,7 @@ function startGame() {
   localStorage.setItem('igo_player_name', currentPlayer);
 
   const pool = [...QUESTIONS[currentGenre]];
-  questions = shuffle(pool).slice(0, 10).map(q => {
-    if (q.type !== '4') return q;               // ○×はそのまま
-    const order = shuffle(q.choices.map((_, i) => i)); // 選択肢の並び順をシャッフル
-    return {
-      ...q,
-      choices: order.map(i => q.choices[i]),     // 選択肢を並べ替え
-      ans: order.indexOf(q.ans)                  // 正解インデックスを貼り直し
-    };
-  });
+  questions = shuffle(pool).slice(0, 10);
   qIndex = 0; score = 0; correctCount = 0; wrongCount = 0;
   timeLeft = 120; wrongAnswers = [];
 
